@@ -1,0 +1,31 @@
+Respuestas al Laboratorio: Tag Helpers en ASP.NET Core
+
+1. ¿Dónde se ejecuta un Tag Helper y qué recibe el navegador?
+R: Se ejecutan directamente en el servidor antes de que la página se envíe. Para cuando la página llega al navegador del usuario, este solo recibe HTML normal y corriente; ni se entera de que usamos Tag Helpers o código de C# detrás de cámaras.
+
+2. ¿Qué diferencia hay entre asp-for y [BindProperty]?
+R: Básicamente, `asp-for` es lo que usamos en el diseño (HTML) para "amarrar" visualmente un input con una variable de nuestro modelo. Por otro lado, `[BindProperty]` va en el código C# y es como darle permiso al sistema para que llene automáticamente esa variable con lo que el usuario escribió en el formulario al darle a enviar.
+
+3. ¿Por qué se escribe Inscripcion.Nombre en asp-for?
+R: Porque tenemos un objeto principal llamado `Inscripcion` que agrupa todos los datos del formulario, y adentro de ese objeto está la variable específica `Nombre`. Es simplemente decirle al código "busca dentro de Inscripcion y usa la propiedad Nombre".
+
+4. ¿Qué diferencia hay entre asp-for y asp-items en un selector?
+R: Hacen cosas distintas pero se complementan perfectamente: `asp-items` es el encargado de cargar la lista de opciones que el usuario va a ver en la pantalla desplegable, mientras que `asp-for` se encarga de atrapar la opción que el usuario finalmente eligió y guardarla.
+
+5. ¿Por qué el selector muestra un texto pero envía un identificador?
+R: Porque usamos listas de tipo `SelectListItem`, que nos permiten tener dos caras de la misma moneda: un `Text` (que es el nombre bonito y amigable que lee el usuario, como "Rescate de civiles") y un `Value` (que es el ID interno que nosotros y la base de datos necesitamos para no confundir la información).
+
+6. ¿Qué método atiende asp-page-handler="Inscribir" en este formulario y por qué?
+R: Lo atiende el método `OnPostInscribir()`. Esto pasa por una regla automática (o convención) que tiene Razor Pages, donde simplemente junta la palabra `OnPost` (porque es el método que se usa al enviar formularios) con el nombre que le pusimos al handler, que en este caso fue `Inscribir`.
+
+7. ¿Por qué se ejecuta CargarOpciones() tanto en GET como en POST?
+R: Porque las páginas web sufren de "amnesia" entre cada recarga. Si un usuario envía el formulario (POST) pero le falta llenar un dato y la página tiene que volver a recargarse para mostrarle el error, la página ya olvidó cuáles eran las misiones y ciudades. Al llamar a `CargarOpciones()` de nuevo, evitamos que los selectores aparezcan en blanco.
+
+8. ¿Por qué debe comprobarse ModelState.IsValid aunque exista validación en el navegador?
+R: Porque la validación del navegador es solo una ayuda visual, pero cualquiera que sepa un poquito puede modificar el HTML o apagar JavaScript para mandarnos datos basura o hacer trampa. Revisar `ModelState.IsValid` directamente en el servidor es nuestro verdadero escudo de seguridad, porque eso nadie lo puede evadir.
+
+9. ¿Qué hace asp-route-misionId y cómo llega su valor al PageModel?
+R: Lo que hace es armar un link que lleva el dato pegado al final (tipo `?misionId=1`). Cuando el usuario entra a ese link, ASP.NET es súper inteligente, lee la URL, saca ese "1" y se lo pasa automáticamente a la variable `misionId` que tenemos esperando en nuestro método `OnGet`.
+
+10. ¿Qué habría que agregar para guardar realmente una inscripción?
+R: Faltaría hacer la conexión real con la base de datos. Tendríamos que crear una clase (una entidad) para la inscripción, registrarla en nuestro `HeroesContext` y correr las migraciones para crear la tabla en SQL. Por último, en nuestro método `OnPostInscribir`, en lugar de solo mostrar un mensaje, tomaríamos los datos, haríamos un `_context.Add()` y luego un `_context.SaveChanges()` para guardarlos de verdad.

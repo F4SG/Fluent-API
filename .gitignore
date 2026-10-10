@@ -1,0 +1,11 @@
+# Directorios de compilación y Visual Studio
+.vs/
+bin/
+obj/
+
+# Otros archivos ignorados por defecto en .NET
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.log
